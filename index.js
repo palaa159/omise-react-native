@@ -17,6 +17,8 @@ class ReactNativeOmise {
     constructor() {
         this.createSource = this.createSource.bind(this);
         this.createToken = this.createToken.bind(this);
+        this.createCustomer = this.createCustomer.bind(this);
+        this.createCharge = this.createCharge.bind(this);
         this.getCapabilities = this.getCapabilities.bind(this);
     }
 
@@ -81,6 +83,71 @@ class ReactNativeOmise {
             }).catch((error) => resolve(error));
         });
     }
+
+    /**
+     * Create Customer
+     */
+    createCustomer(data) {
+        const customerEndpoint = apiEndpoint + "customers";
+        // set headers
+        let headers = this.getHeaders();
+
+        return new Promise((resolve, reject) => {
+            // verify a public key
+            if (!_publicKey || _publicKey === "") {
+                reject("Please config your public key");
+                return;
+            }
+
+            return fetch(customerEndpoint, {
+                method: 'POST',
+                cache: 'no-cache',
+                headers: headers,
+                body: JSON.stringify(data)
+            }).then((response) => {
+                if (response.ok && response.status === 200) {
+                    resolve(response.json());
+                } else {
+                    console.log("response not ok", response);
+                    reject(response.json());
+                }
+            }).catch((error) => resolve(error));
+        });
+    }
+
+        /**
+     * Create a charge
+     * @param {*} data 
+     * 
+     * @return {*}
+     */
+         createCharge(data) {
+            const chargeEndpoint = apiEndpoint + "charges";
+            // set headers
+            let headers = this.getHeaders();
+    
+            return new Promise((resolve, reject) => {
+                // verify a public key
+                if (!_publicKey || _publicKey === "") {
+                    reject("Please config your public key");
+                    return;
+                }
+    
+                return fetch(chargeEndpoint, {
+                    method: 'POST',
+                    cache: 'no-cache',
+                    headers: headers,
+                    body: JSON.stringify(data)
+                }).then((response) => {
+                    if (response.ok && response.status === 200) {
+                        resolve(response.json());
+                    } else {
+                        console.log("response not ok", response);
+                        reject(response.json());
+                    }
+                }).catch((error) => resolve(error));
+            });
+        }
 
     /**
      * Create a source
@@ -154,5 +221,7 @@ module.exports = {
     config: reactNativeOmise.config,
     createToken: reactNativeOmise.createToken,
     createSource: reactNativeOmise.createSource,
+    createCustomer: reactNativeOmise.createCustomer,
+    createCharge: reactNativeOmise.createCharge,
     getCapabilities: reactNativeOmise.getCapabilities
 }
